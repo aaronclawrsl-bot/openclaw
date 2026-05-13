@@ -69,6 +69,10 @@ function hasConfiguredSecretString(value: unknown): boolean {
   return normalizeSecretInputString(value) !== undefined;
 }
 
+function hasConfiguredOAuthRef(credential: OAuthCredential): boolean {
+  return credential.oauthRef?.source === "openclaw-credentials";
+}
+
 export function evaluateStoredCredentialEligibility(params: {
   credential: AuthProfileCredential;
   now?: number;
@@ -104,7 +108,8 @@ export function evaluateStoredCredentialEligibility(params: {
 
   if (
     normalizeSecretInputString(credential.access) === undefined &&
-    normalizeSecretInputString(credential.refresh) === undefined
+    normalizeSecretInputString(credential.refresh) === undefined &&
+    !hasConfiguredOAuthRef(credential)
   ) {
     return { eligible: false, reasonCode: "missing_credential" };
   }
